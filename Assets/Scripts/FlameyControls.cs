@@ -17,6 +17,7 @@ public class FlameyControls : MonoBehaviour {
 	CharacterController controller;
 	float currentHeadRotation = 0.0f;
 	float yVelocity = 0.0f;
+	Vector3 moveVelocity = Vector3.zero;
 	
 	void Awake() {
 		controller = GetComponent<CharacterController>();
@@ -27,7 +28,7 @@ public class FlameyControls : MonoBehaviour {
 
 		// movement input
 		Vector2 mouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-		Vector3 input = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+		// Vector3 input = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 		
 		// rotate player + camera side to side
 		transform.Rotate(Vector3.up, mouseInput.x * rotationSpeed);
@@ -44,12 +45,14 @@ public class FlameyControls : MonoBehaviour {
 				yVelocity = jumpSpeed;
 			}
 		}
+		moveVelocity = transform.TransformDirection(new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"))) * speed;
 
 		// apply gravity
 		yVelocity -= gravity * Time.deltaTime;
 
 		// move player
-		controller.Move(transform.TransformDirection(input * speed * Time.deltaTime + yVelocity * Vector3.up * Time.deltaTime));
+		Vector3 velocity = moveVelocity + yVelocity * Vector3.up;
+		controller.Move(velocity * Time.deltaTime);
 
 	}
 
